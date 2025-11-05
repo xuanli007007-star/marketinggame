@@ -7,52 +7,154 @@
 <meta name="description" content="墨尔本每日一题小游戏，答对赢积分，积分可兑礼品。">
 <style>
 :root{
-  --primary:#00C2A8; --accent:#7C3AED; --ink:#111827; --muted:#6B7280;
-  --bg:#0B1020; --card:#FFFFFF; --ok:#16A34A; --err:#DC2626; --ring:#E5E7EB;
+  --primary:#00C2A8; --accent:#7C3AED; --ink:#111827; --muted:#9CA3AF;
+  --bg:#0B1020; --card:#0E1226; --ok:#16A34A; --err:#DC2626; --ring:#2B3257;
 }
+
+/* 基础 */
 *{box-sizing:border-box} html,body{height:100%}
 body{
-  margin:0;
-  background: radial-gradient(1200px 600px at 50% -10%, #1B2250 0%, #0B1020 60%, #080B16 100%);
-  color:#111827; font-family:Inter, system-ui, -apple-system, Segoe UI, Roboto, Noto Sans, Helvetica, Arial;
+  margin:0; background:#0B1020; color:#E5E7EB;
+  font-family:Inter, system-ui, -apple-system, Segoe UI, Roboto, Noto Sans, Helvetica, Arial;
+  overflow-x:hidden;
 }
-.page{max-width:960px;margin:0 auto;padding:24px}
-.hero .brand{display:flex;align-items:center;gap:16px;color:#F9FAFB}
-.logo{width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,var(--primary),#47E5D2);
-  color:#00110E;display:flex;align-items:center;justify-content:center;font-weight:800;font-family:Poppins,sans-serif;
-  box-shadow:0 8px 24px rgba(0,194,168,.45), inset 0 0 12px rgba(255,255,255,.3);}
-.titles h1{margin:0 0 6px 0;color:#FFFFFF;font-family:Poppins,sans-serif;font-weight:600;letter-spacing:.2px}
-.subtitle{margin:0;color:#D1D5DB}
-.chip{margin-left:auto;background:#111827;color:white;border-radius:999px;padding:8px 14px;font-weight:600;
-  box-shadow:0 2px 0 rgba(255,255,255,.05) inset, 0 8px 18px rgba(0,0,0,.35)}
-.card{margin-top:18px;background:var(--card);border-radius:16px;padding:20px;box-shadow:0 10px 30px rgba(0,0,0,.25)}
+
+/* 背景：渐变+粒子Canvas叠加 */
+.bg-wrap{position:fixed; inset:0; z-index:-2; overflow:hidden}
+.bg-grad{
+  position:absolute; inset:-20%;
+  background:
+   radial-gradient(1000px 600px at 70% -10%, #1B2250 0%, transparent 60%),
+   radial-gradient(1200px 800px at 10% 120%, #171E46 0%, transparent 60%),
+   radial-gradient(900px 700px at 90% 60%, #0F1640 0%, transparent 65%),
+   linear-gradient(180deg, #080B20, #0B1020);
+  filter:saturate(1.2) contrast(1.05);
+}
+canvas#bg, canvas#fx{position:fixed; inset:0; z-index:-1; pointer-events:none}
+
+/* 霓虹外发光 */
+.neon{
+  filter: drop-shadow(0 0 6px rgba(0,194,168,.65))
+          drop-shadow(0 0 18px rgba(124,58,237,.45));
+}
+
+/* 页面布局 */
+.page{max-width:960px;margin:0 auto;padding:22px}
+.hero{padding-top:16px}
+.brand{display:flex;align-items:center;gap:16px}
+.logo{
+  width:48px;height:48px;border-radius:14px;
+  background:conic-gradient(from 180deg at 50% 50%, var(--primary), #47E5D2, var(--primary));
+  display:flex;align-items:center;justify-content:center;font-weight:800;color:#01211C; letter-spacing:.5px;
+  box-shadow:0 8px 24px rgba(0,194,168,.45), inset 0 0 12px rgba(255,255,255,.35);
+}
+.titles h1{margin:0 0 6px 0;color:#FDFDFE;font-weight:800;letter-spacing:.3px}
+.subtitle{margin:0;color:#C7CBD6}
+.chip{
+  margin-left:auto;background:#0E142C;color:#F5F8FC;border:1px solid #2C335A;border-radius:999px;padding:8px 14px;font-weight:700;
+  box-shadow:inset 0 0 12px rgba(124,58,237,.25), 0 8px 18px rgba(0,0,0,.35);
+}
+
+/* 卡片 + 动态边框流光 */
+.card{
+  position:relative;margin-top:18px;border-radius:18px;padding:20px;background:linear-gradient(180deg, #0F1430, #0B1026);
+  border:1px solid #2B3257;color:#E9ECF7;
+  box-shadow:0 12px 30px rgba(0,0,0,.45), inset 0 0 0 1px rgba(255,255,255,.02);
+}
+.card::before{
+  content:""; position:absolute; inset:-1px; border-radius:19px; padding:1px;
+  background:conic-gradient(from 0deg, rgba(124,58,237,.6), rgba(0,194,168,.6), rgba(124,58,237,.6));
+  -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor; mask-composite: exclude; animation:borderSpin 6s linear infinite;
+  opacity:.5;
+}
+@keyframes borderSpin{to{transform:rotate(360deg)}}
+
 .meta{display:flex;align-items:center;gap:8px;margin-bottom:6px}
-.badge{font-size:12px;color:#065F46;background:#ECFDF5;border:1px solid #A7F3D0;border-radius:6px;padding:4px 8px}
-.muted{color:var(--muted);font-size:12px;margin-left:auto}
-h2{margin:6px 0 12px 0;color:var(--ink)}
+.badge{font-size:12px;color:#0C4036;background:#08312C;border:1px solid #1AA58E;border-radius:6px;padding:4px 8px}
+.muted{color:#8B93B7;font-size:12px;margin-left:auto}
+h2{margin:10px 0 14px 0;color:#F7F9FF; font-size:20px}
+
+/* 选项卡片 */
 .options{display:grid;gap:12px}
-.option{display:flex;align-items:center;gap:10px;padding:14px;border:1px solid var(--ring);border-radius:12px;background:#F9FAFB;cursor:pointer;transition:.2s ease}
-.option:hover{border-color:var(--primary);box-shadow:0 6px 20px rgba(0,194,168,.25)}
-.option input{appearance:none;width:18px;height:18px;border:2px solid var(--ring);border-radius:999px;display:inline-block;position:relative}
+.option{
+  display:flex;align-items:center;gap:10px;padding:14px;border:1px solid var(--ring);border-radius:12px;background:#0F1638;cursor:pointer;
+  transition:.2s ease; color:#DDE3FF;
+}
+.option:hover{border-color:var(--primary); box-shadow:0 6px 20px rgba(0,194,168,.25)}
+.option input{appearance:none;width:18px;height:18px;border:2px solid #5460A1;border-radius:999px;display:inline-block;position:relative;background:#0B1026}
 .option input:checked{border-color:var(--primary)}
 .option input:checked::after{content:"";position:absolute;inset:3px;border-radius:999px;background:var(--primary)}
-.option.correct{border-color:var(--ok)} .option.wrong{border-color:var(--err)}
-.btn{margin-top:8px;background:var(--primary);color:white;border:none;border-radius:12px;padding:12px 18px;font-weight:700;cursor:pointer;transition:.15s transform ease,.2s background ease;box-shadow:0 8px 20px rgba(0,194,168,.35)}
-.btn:hover{transform:translateY(-1px)} .btn:disabled{background:#CBD5E1;color:#6B7280;box-shadow:none;cursor:not-allowed}
-.toast{margin-top:12px;padding:12px 14px;border-radius:12px;background:#F1F5F9;color:#0F172A;border:1px solid #E2E8F0}
-.toast.ok{background:#ECFDF5;color:#065F46;border-color:#A7F3D0}
-.toast.err{background:#FEF2F2;color:#7F1D1D;border-color:#FECACA}
+.option.correct{border-color:var(--ok);background:linear-gradient(180deg,#0E2B1A,#0C1E15)}
+.option.wrong{border-color:var(--err);background:linear-gradient(180deg,#2A1010,#1A0D0D)}
+
+/* 按钮：霓虹律动 */
+.btn{
+  margin-top:10px;background:linear-gradient(180deg, #14D4BE, #00C2A8); color:#00100C;border:none;border-radius:12px;
+  padding:12px 18px;font-weight:800;cursor:pointer;transition:.15s transform ease,.25s filter ease;
+  box-shadow:0 10px 26px rgba(0,194,168,.35);
+}
+.btn:hover{transform:translateY(-1px); filter:saturate(1.1) brightness(1.05)}
+.btn:disabled{background:#374166;color:#9AA4D1;box-shadow:none;cursor:not-allowed}
+
+/* 反馈条 */
+.toast{margin-top:12px;padding:12px 14px;border-radius:12px;background:#0E1430;color:#E5EAFF;border:1px solid #2F3766}
+.toast.ok{background:#0D2A1C;border-color:#1AA368;color:#CFFAE2}
+.toast.err{background:#2A1212;border-color:#BE3B3B;color:#FFD0D0}
 .hidden{display:none}
+
+/* 奖励弹窗 */
+.modal{
+  position:fixed; inset:0; display:none; place-items:center; background:rgba(2,6,18,.55); backdrop-filter:blur(6px); z-index:10;
+}
+.modal.show{display:grid; animation:fadeIn .2s ease}
+@keyframes fadeIn{from{opacity:0} to{opacity:1}}
+.modal-card{
+  width:min(92vw,520px); background:linear-gradient(180deg,#0E1330,#0A0F25); border:1px solid #2E3664; border-radius:18px; padding:20px;
+  box-shadow:0 20px 60px rgba(0,0,0,.6), inset 0 0 0 1px rgba(255,255,255,.03);
+  transform:scale(.9); animation:popIn .25s ease forwards;
+}
+@keyframes popIn{to{transform:scale(1)}}
+.modal-title{
+  font-size:22px; font-weight:900; margin:4px 0 10px; color:#FEFEFF;
+  background:linear-gradient(90deg,#B48CFF,#5CF0E1,#B48CFF);
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+  animation:shimmer 2.4s linear infinite;
+  background-size:200% 100%;
+}
+@keyframes shimmer{to{background-position:200% 0}}
+.modal-body{color:#C8D1FF; font-size:14px}
+.modal-qr{margin:14px 0; display:flex; align-items:center; justify-content:center}
+.modal-qr .qr{
+  width:180px;height:180px;border-radius:12px;background:
+    linear-gradient(135deg, #121735, #0B1026);
+  border:1px dashed #445; display:grid; place-items:center; color:#7EA;
+}
+.modal-actions{display:flex; gap:10px; justify-content:flex-end}
+.btn-ghost{
+  background:transparent; color:#CFE; border:1px solid #3A416D; border-radius:10px; padding:10px 14px; cursor:pointer
+}
+.btn-primary{
+  background:linear-gradient(180deg,#14D4BE,#00C2A8); color:#00100C; border:0; border-radius:10px; padding:10px 14px; font-weight:800; cursor:pointer
+}
+
 .footnote{color:#9CA3AF;text-align:center;margin:22px 0 8px 0} .tiny{font-size:12px;color:#94A3B8}
 @media (max-width:480px){.page{padding:16px} h2{font-size:18px}}
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Poppins:wght@600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=Poppins:wght@700;800&display=swap" rel="stylesheet">
 </head>
 <body>
+  <!-- 背景层 -->
+  <div class="bg-wrap">
+    <div class="bg-grad"></div>
+    <canvas id="bg"></canvas>
+    <canvas id="fx"></canvas>
+  </div>
+
   <main class="page">
-    <section class="hero">
+    <section class="hero neon">
       <div class="brand">
         <div class="logo">MM</div>
         <div class="titles">
@@ -70,50 +172,64 @@ h2{margin:6px 0 12px 0;color:var(--ink)}
       </div>
       <h2 id="questionText">加载今日题目中…</h2>
       <div id="options" class="options"></div>
-      <button id="btnSubmit" class="btn" disabled>提交答案</button>
+      <button id="btnSubmit" class="btn neon" disabled>提交答案</button>
       <div id="feedback" class="toast hidden"></div>
     </section>
 
     <footer class="footnote">
       <p>每人每日仅可作答 1 次。积分将与 Melb Marketing 平台对接。</p>
-      <p class="tiny">无后端时自动使用内置题库；有后端再接 API。</p>
+      <p class="tiny">无后端时自动使用内置题库；接上 API 后将同步积分。</p>
     </footer>
   </main>
 
+  <!-- 奖励彩蛋弹窗 -->
+  <div class="modal" id="rewardModal" aria-hidden="true">
+    <div class="modal-card">
+      <div class="modal-title">🎉 恭喜答对！奖励已到账</div>
+      <div class="modal-body">已为你增加 <b id="rewardDelta">+10</b> 分。扫码或点击下方按钮前往领奖中心兑换礼品/酒水券。</div>
+      <div class="modal-qr">
+        <!-- 你可以替换成自己的二维码图片：把下面这一块 div 替换为 <img src="..."> 即可 -->
+        <div class="qr">放你的<br>二维码</div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-ghost" id="btnCloseModal">稍后再说</button>
+        <button class="btn-primary" id="btnGoClaim">去领奖中心</button>
+      </div>
+    </div>
+  </div>
+
 <script>
-/* —— 配置 —— */
+/* ===== 配置 ===== */
 const CONFIG = {
   POINTS_PER_CORRECT: 10,
-  API_BASE: "", // 先留空，等接上 Wix 后端再填
+  API_BASE: "", // 等接上 Wix 后端再填，例如 "https://你的域名/_functions"
   ENDPOINTS: { ME:"/me", ADD_POINTS:"/points/add", RECORD_ANSWER:"/answers/record", TODAY_QUESTION:"/questions/today" },
-  API_TIMEOUT_MS: 2500 // API 超时兜底到本地题库
+  API_TIMEOUT_MS: 2500,
+  CLAIM_URL: "#" // “去领奖中心”跳转链接（替换为你的页面）
 };
 
-/* —— 工具 —— */
+/* ===== 工具 ===== */
 const $ = s => document.querySelector(s);
 function todayKey(){ return new Date().toISOString().slice(0,10); }
 function lsGet(k, def=null){ try{ return JSON.parse(localStorage.getItem(k)) ?? def; }catch(e){ return def; } }
 function lsSet(k,v){ localStorage.setItem(k, JSON.stringify(v)); }
 function fmtLeftTime(){ const end=new Date(); end.setHours(23,59,59,999); const ms=end-new Date(); const h=Math.floor(ms/3600000); const m=Math.floor((ms%3600000)/60000); return `剩余 ${h}h ${m}m`; }
 function shuffle(arr){ return arr.map(v=>[Math.random(),v]).sort((a,b)=>a[0]-b[0]).map(x=>x[1]); }
-function toast(msg,type=""){ const el=$("#feedback"); el.className=`toast ${type||""}`; el.textContent=msg; el.classList.remove("hidden"); }
 function setPoints(p){ state.points=p; $("#pointsChip").textContent=`当前积分：${p}`; }
 
-/* —— 本地题库（总能显示） —— */
+/* ===== 本地题库 ===== */
 const fallbackQuestions = [
   { title:"墨尔本哪条小巷因街头涂鸦而闻名？", correct:"Hosier Lane", wrongs:["Hardware Lane","Degraves Street","Flinders Lane"], explanation:"Hosier Lane 靠近联邦广场，以涂鸦闻名。" },
   { title:"墨尔本的公共交通卡叫做？", correct:"Myki", wrongs:["Opal","Go Card","Octopus"], explanation:"乘坐电车/火车/公交常用 Myki。" },
   { title:"以下哪个地区以华人美食集中而著名？", correct:"Box Hill", wrongs:["St Kilda","Docklands","Fitzroy"], explanation:"Box Hill 是华人社区与餐饮热点。" }
 ];
 
-/* —— 状态 —— */
+/* ===== 状态 ===== */
 const state = { question:null, selected:null, points:0, token:null };
 
-/* —— API（带超时） —— */
+/* ===== API（带超时） ===== */
 function apiBase(){ return (CONFIG.API_BASE||"").trim(); }
-function withTimeout(promise, ms){
-  return Promise.race([promise, new Promise((_,rej)=>setTimeout(()=>rej(new Error("TIMEOUT")), ms))]);
-}
+function withTimeout(promise, ms){ return Promise.race([promise, new Promise((_,rej)=>setTimeout(()=>rej(new Error("TIMEOUT")), ms))]); }
 async function apiGet(path){
   const url = apiBase()+path;
   const headers={'Content-Type':'application/json'};
@@ -131,11 +247,11 @@ async function apiPost(path, body){
   return res.json();
 }
 
-/* —— 每日限制 —— */
+/* ===== 每日限制 ===== */
 function hasAnsweredToday(){ return !!lsGet('answered:'+todayKey(), false); }
 function setAnsweredToday(){ lsSet('answered:'+todayKey(), true); }
 
-/* —— 渲染 —— */
+/* ===== 渲染题目 ===== */
 function renderQuestion(q){
   $("#questionText").textContent = q.title;
   const box = $("#options"); box.innerHTML='';
@@ -148,7 +264,110 @@ function renderQuestion(q){
   });
 }
 
-/* —— 逻辑 —— */
+/* ===== 背景粒子（星尘） ===== */
+(function starfield(){
+  const c = document.getElementById('bg'); const ctx = c.getContext('2d');
+  let w= c.width = innerWidth, h= c.height = innerHeight;
+  let stars = Array.from({length: 140},()=>spawn());
+  function spawn(){
+    return { x: Math.random()*w, y: Math.random()*h, r: Math.random()*1.3+0.3, s: Math.random()*0.6+0.2, a: Math.random()*1, tw: Math.random()*0.02+0.005 };
+  }
+  addEventListener('resize', ()=>{ w=c.width=innerWidth; h=c.height=innerHeight; });
+  (function tick(){
+    ctx.clearRect(0,0,w,h);
+    for(const s of stars){
+      s.y += s.s; s.a += s.tw;
+      if(s.y>h+5){ s.x=Math.random()*w; s.y=-5; }
+      const alpha = 0.35 + Math.sin(s.a)*0.25;
+      ctx.beginPath(); ctx.fillStyle=`rgba(160,220,255,${alpha})`; ctx.arc(s.x,s.y,s.r,0,Math.PI*2); ctx.fill();
+    }
+    requestAnimationFrame(tick);
+  })();
+})();
+
+/* ===== FX：彩带+金币爆裂 ===== */
+const FX = (function(){
+  const c = document.getElementById('fx'); const ctx = c.getContext('2d');
+  let w = c.width = innerWidth, h = c.height = innerHeight;
+  addEventListener('resize', ()=>{ w=c.width=innerWidth; h=c.height=innerHeight; });
+
+  const pieces = [];
+  function spawnBurst(x, y, n=120){
+    for(let i=0;i<n;i++){
+      const ang = Math.random()*Math.PI*2;
+      const spd = Math.random()*6+2;
+      const isCoin = Math.random()<0.25;
+      pieces.push({
+        x, y,
+        vx: Math.cos(ang)*spd,
+        vy: Math.sin(ang)*spd - (isCoin?1.5:0),
+        g: 0.2,
+        life: 60 + Math.random()*30,
+        c: isCoin ? 'coin' : (Math.random()<0.5? '#00C2A8' : '#7C3AED'),
+        r: isCoin ? 6 : 2+Math.random()*2,
+        rot: Math.random()*Math.PI, vr:(Math.random()-.5)*0.2
+      });
+    }
+  }
+  function draw(){
+    ctx.clearRect(0,0,w,h);
+    for(let i=pieces.length-1;i>=0;i--){
+      const p = pieces[i];
+      p.life--; if(p.life<=0){ pieces.splice(i,1); continue; }
+      p.vy += p.g; p.x += p.vx; p.y += p.vy; p.rot += p.vr;
+      if(p.c==='coin'){
+        ctx.save();
+        ctx.translate(p.x,p.y); ctx.rotate(p.rot);
+        // 金币：外圈+高光
+        ctx.fillStyle='rgba(255,220,120,.95)';
+        ctx.beginPath(); ctx.arc(0,0,p.r,0,Math.PI*2); ctx.fill();
+        ctx.strokeStyle='rgba(255,255,255,.6)'; ctx.lineWidth=1;
+        ctx.beginPath(); ctx.arc(-p.r/3,-p.r/3,p.r/2,0,Math.PI*2); ctx.stroke();
+        ctx.restore();
+      }else{
+        ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.rot);
+        ctx.fillStyle=p.c; ctx.fillRect(-p.r*2,-p.r/2,p.r*4,p.r);
+        ctx.restore();
+      }
+    }
+    requestAnimationFrame(draw);
+  }
+  draw();
+  return { burst:(x,y)=>spawnBurst(x,y) };
+})();
+
+/* ===== 音效（WebAudio 简单“叮”） ===== */
+const SFX = (function(){
+  let ac; try{ ac = new (window.AudioContext||window.webkitAudioContext)(); }catch(e){}
+  function ping(freq=880, duration=0.12){
+    if(!ac) return;
+    const o = ac.createOscillator(), g = ac.createGain();
+    o.type = 'triangle'; o.frequency.value=freq;
+    g.gain.setValueAtTime(0.001, ac.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.3, ac.currentTime+0.01);
+    g.gain.exponentialRampToValueAtTime(0.001, ac.currentTime+duration);
+    o.connect(g).connect(ac.destination); o.start(); o.stop(ac.currentTime+duration);
+  }
+  return { ping };
+})();
+
+/* ===== 奖励弹窗 ===== */
+function openRewardModal(delta){
+  $("#rewardDelta").textContent = `+${delta}`;
+  $("#rewardModal").classList.add('show');
+  $("#rewardModal").setAttribute('aria-hidden','false');
+}
+function closeRewardModal(){
+  $("#rewardModal").classList.remove('show');
+  $("#rewardModal").setAttribute('aria-hidden','true');
+}
+$("#btnCloseModal").addEventListener('click', closeRewardModal);
+$("#btnGoClaim").addEventListener('click', ()=>{ if(CONFIG.CLAIM_URL && CONFIG.CLAIM_URL!=="#") location.href=CONFIG.CLAIM_URL; else closeRewardModal(); });
+
+/* ===== 业务逻辑 ===== */
+function hasAnsweredToday(){ return !!lsGet('answered:'+todayKey(), false); }
+function setAnsweredToday(){ lsSet('answered:'+todayKey(), true); }
+
 async function loadUser(){
   try{
     const u = new URL(location.href);
@@ -186,11 +405,9 @@ async function loadQuestion(){
       state.question = { title:q.title, options: shuffle([q.correct,...q.wrongs]), correct:q.correct, explanation:q.explanation };
     }
   }catch(e){
-    // 任何错误都直接退回本地题库，确保一定能显示
     const q = fallbackQuestions[Math.floor(Math.random()*fallbackQuestions.length)];
     state.question = { title:q.title, options: shuffle([q.correct,...q.wrongs]), correct:q.correct, explanation:q.explanation };
   }
-
   renderQuestion(state.question);
 }
 
@@ -199,12 +416,15 @@ async function submit(){
   const correct = state.selected === state.question.correct;
   setAnsweredToday();
 
+  // 高亮
   [...document.querySelectorAll('.option')].forEach(el=>{
     const v = el.querySelector('input').value;
     if(v===state.question.correct) el.classList.add('correct');
     if(v===state.selected && !correct) el.classList.add('wrong');
   });
   $("#btnSubmit").disabled = true;
+
+  const clickPos = { x: innerWidth/2, y: innerHeight/2 };
 
   if(correct){
     const delta = CONFIG.POINTS_PER_CORRECT || 10;
@@ -220,9 +440,13 @@ async function submit(){
       setPoints(state.points + delta);
       lsSet('points', state.points);
     }
-    toast(`回答正确！+${CONFIG.POINTS_PER_CORRECT||10} 分\n${state.question.explanation||''}`, 'ok');
+    // 爆裂FX + 音效 + 弹窗
+    FX.burst(clickPos.x, clickPos.y); SFX.ping(1200, .14);
+    $("#feedback").className='toast ok'; $("#feedback").textContent=`回答正确！+${CONFIG.POINTS_PER_CORRECT||10} 分  ·  ${state.question.explanation||''}`; $("#feedback").classList.remove('hidden');
+    setTimeout(()=> openRewardModal(delta), 300);
   }else{
-    toast(`回答错误！正确答案：${state.question.correct}\n${state.question.explanation||''}`, 'err');
+    $("#feedback").className='toast err'; $("#feedback").textContent=`回答错误！正确答案：${state.question.correct} · ${state.question.explanation||''}`; $("#feedback").classList.remove('hidden');
+    SFX.ping(320, .12);
   }
 
   // 记录答案（可选）
@@ -233,17 +457,11 @@ async function submit(){
   }catch(e){}
 }
 
+/* ===== 启动 ===== */
 document.addEventListener('DOMContentLoaded', async ()=>{
-  try{
-    await loadUser();
-    await loadQuestion();
-    $("#btnSubmit").addEventListener('click', submit);
-  }catch(e){
-    // 万一上面也炸了，仍然兜底渲染本地题
-    const q = fallbackQuestions[0];
-    state.question = { title:q.title, options: shuffle([q.correct,...q.wrongs]), correct:q.correct, explanation:q.explanation };
-    renderQuestion(state.question);
-  }
+  await loadUser();
+  await loadQuestion();
+  $("#btnSubmit").addEventListener('click', submit);
 });
 </script>
 </body>
