@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>墨城每日答题 · MelbQuiz</title>
+  <meta name="description" content="墨尔本每日一题小游戏，答对赢积分，积分可兑礼品。">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Poppins:wght@600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <main class="page">
+    <section class="hero">
+      <div class="brand">
+        <div class="logo">MM</div>
+        <div class="titles">
+          <h1>墨城每日答题</h1>
+          <p class="subtitle">每天 1 题 · 答对 +10 分 · 兑酒水/礼品</p>
+        </div>
+        <div class="chip" id="pointsChip">当前积分：0</div>
+      </div>
+    </section>
+
+    <section class="card" id="quizCard" aria-live="polite">
+      <div class="meta">
+        <span class="badge" id="badgeDay">今日第 1 题</span>
+        <span class="muted" id="leftTime"></span>
+      </div>
+      <h2 id="questionText">加载今日题目中…</h2>
+      <div id="options" class="options"></div>
+      <button id="btnSubmit" class="btn" disabled>提交答案</button>
+      <div id="feedback" class="toast hidden"></div>
+    </section>
+
+    <footer class="footnote">
+      <p>每人每日仅可作答 1 次。积分将与 Melb Marketing 平台对接。</p>
+      <p class="tiny">MVP：如无法连接 API，将自动使用内置题库。</p>
+    </footer>
+  </main>
+
+  <!-- 读取配置 -->
+  <script defer src="./config.json" type="application/json" id="app-config"></script>
+  <script defer src="./app.js"></script>
+</body>
+</html>
