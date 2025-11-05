@@ -1,0 +1,11 @@
+{
+  "APP_NAME": "MelbQuiz MVP",
+  "POINTS_PER_CORRECT": 10,
+  "API_BASE": "", 
+  "ENDPOINTS": {
+    "ME": "/me",
+    "ADD_POINTS": "/points/add",
+    "RECORD_ANSWER": "/answers/record",
+    "TODAY_QUESTION": "/questions/today"
+  }
+}
