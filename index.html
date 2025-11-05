@@ -1,14 +1,54 @@
 <!doctype html>
 <html lang="zh-CN">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <title>墨城每日答题 · MelbQuiz</title>
-  <meta name="description" content="墨尔本每日一题小游戏，答对赢积分，积分可兑礼品。">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Poppins:wght@600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./style.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>墨城每日答题 · MelbQuiz</title>
+<meta name="description" content="墨尔本每日一题小游戏，答对赢积分，积分可兑礼品。">
+<style>
+:root{
+  --primary:#00C2A8; --accent:#7C3AED; --ink:#111827; --muted:#6B7280;
+  --bg:#0B1020; --card:#FFFFFF; --ok:#16A34A; --err:#DC2626; --ring:#E5E7EB;
+}
+*{box-sizing:border-box} html,body{height:100%}
+body{
+  margin:0;
+  background: radial-gradient(1200px 600px at 50% -10%, #1B2250 0%, #0B1020 60%, #080B16 100%);
+  color:#111827; font-family:Inter, system-ui, -apple-system, Segoe UI, Roboto, Noto Sans, Helvetica, Arial;
+}
+.page{max-width:960px;margin:0 auto;padding:24px}
+.hero .brand{display:flex;align-items:center;gap:16px;color:#F9FAFB}
+.logo{width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,var(--primary),#47E5D2);
+  color:#00110E;display:flex;align-items:center;justify-content:center;font-weight:800;font-family:Poppins,sans-serif;
+  box-shadow:0 8px 24px rgba(0,194,168,.45), inset 0 0 12px rgba(255,255,255,.3);}
+.titles h1{margin:0 0 6px 0;color:#FFFFFF;font-family:Poppins,sans-serif;font-weight:600;letter-spacing:.2px}
+.subtitle{margin:0;color:#D1D5DB}
+.chip{margin-left:auto;background:#111827;color:white;border-radius:999px;padding:8px 14px;font-weight:600;
+  box-shadow:0 2px 0 rgba(255,255,255,.05) inset, 0 8px 18px rgba(0,0,0,.35)}
+.card{margin-top:18px;background:var(--card);border-radius:16px;padding:20px;box-shadow:0 10px 30px rgba(0,0,0,.25)}
+.meta{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.badge{font-size:12px;color:#065F46;background:#ECFDF5;border:1px solid #A7F3D0;border-radius:6px;padding:4px 8px}
+.muted{color:var(--muted);font-size:12px;margin-left:auto}
+h2{margin:6px 0 12px 0;color:var(--ink)}
+.options{display:grid;gap:12px}
+.option{display:flex;align-items:center;gap:10px;padding:14px;border:1px solid var(--ring);border-radius:12px;background:#F9FAFB;cursor:pointer;transition:.2s ease}
+.option:hover{border-color:var(--primary);box-shadow:0 6px 20px rgba(0,194,168,.25)}
+.option input{appearance:none;width:18px;height:18px;border:2px solid var(--ring);border-radius:999px;display:inline-block;position:relative}
+.option input:checked{border-color:var(--primary)}
+.option input:checked::after{content:"";position:absolute;inset:3px;border-radius:999px;background:var(--primary)}
+.option.correct{border-color:var(--ok)} .option.wrong{border-color:var(--err)}
+.btn{margin-top:8px;background:var(--primary);color:white;border:none;border-radius:12px;padding:12px 18px;font-weight:700;cursor:pointer;transition:.15s transform ease,.2s background ease;box-shadow:0 8px 20px rgba(0,194,168,.35)}
+.btn:hover{transform:translateY(-1px)} .btn:disabled{background:#CBD5E1;color:#6B7280;box-shadow:none;cursor:not-allowed}
+.toast{margin-top:12px;padding:12px 14px;border-radius:12px;background:#F1F5F9;color:#0F172A;border:1px solid #E2E8F0}
+.toast.ok{background:#ECFDF5;color:#065F46;border-color:#A7F3D0}
+.toast.err{background:#FEF2F2;color:#7F1D1D;border-color:#FECACA}
+.hidden{display:none}
+.footnote{color:#9CA3AF;text-align:center;margin:22px 0 8px 0} .tiny{font-size:12px;color:#94A3B8}
+@media (max-width:480px){.page{padding:16px} h2{font-size:18px}}
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Poppins:wght@600&display=swap" rel="stylesheet">
 </head>
 <body>
   <main class="page">
@@ -36,26 +76,175 @@
 
     <footer class="footnote">
       <p>每人每日仅可作答 1 次。积分将与 Melb Marketing 平台对接。</p>
-      <p class="tiny">MVP：如无法连接 API，将自动使用内置题库。</p>
+      <p class="tiny">无后端时自动使用内置题库；有后端再接 API。</p>
     </footer>
   </main>
 
-  <!-- 直接内联配置，避免 config.json 加载异常 -->
-  <script id="app-config" type="application/json">
-  {
-    "APP_NAME": "MelbQuiz MVP",
-    "POINTS_PER_CORRECT": 10,
-    "API_BASE": "",
-    "ENDPOINTS": {
-      "ME": "/me",
-      "ADD_POINTS": "/points/add",
-      "RECORD_ANSWER": "/answers/record",
-      "TODAY_QUESTION": "/questions/today"
-    }
-  }
-  </script>
+<script>
+/* —— 配置 —— */
+const CONFIG = {
+  POINTS_PER_CORRECT: 10,
+  API_BASE: "", // 先留空，等接上 Wix 后端再填
+  ENDPOINTS: { ME:"/me", ADD_POINTS:"/points/add", RECORD_ANSWER:"/answers/record", TODAY_QUESTION:"/questions/today" },
+  API_TIMEOUT_MS: 2500 // API 超时兜底到本地题库
+};
 
-  <!-- 确保文件名是 app.js（不是 app.gs） -->
-  <script defer src="./app.js"></script>
+/* —— 工具 —— */
+const $ = s => document.querySelector(s);
+function todayKey(){ return new Date().toISOString().slice(0,10); }
+function lsGet(k, def=null){ try{ return JSON.parse(localStorage.getItem(k)) ?? def; }catch(e){ return def; } }
+function lsSet(k,v){ localStorage.setItem(k, JSON.stringify(v)); }
+function fmtLeftTime(){ const end=new Date(); end.setHours(23,59,59,999); const ms=end-new Date(); const h=Math.floor(ms/3600000); const m=Math.floor((ms%3600000)/60000); return `剩余 ${h}h ${m}m`; }
+function shuffle(arr){ return arr.map(v=>[Math.random(),v]).sort((a,b)=>a[0]-b[0]).map(x=>x[1]); }
+function toast(msg,type=""){ const el=$("#feedback"); el.className=`toast ${type||""}`; el.textContent=msg; el.classList.remove("hidden"); }
+function setPoints(p){ state.points=p; $("#pointsChip").textContent=`当前积分：${p}`; }
+
+/* —— 本地题库（总能显示） —— */
+const fallbackQuestions = [
+  { title:"墨尔本哪条小巷因街头涂鸦而闻名？", correct:"Hosier Lane", wrongs:["Hardware Lane","Degraves Street","Flinders Lane"], explanation:"Hosier Lane 靠近联邦广场，以涂鸦闻名。" },
+  { title:"墨尔本的公共交通卡叫做？", correct:"Myki", wrongs:["Opal","Go Card","Octopus"], explanation:"乘坐电车/火车/公交常用 Myki。" },
+  { title:"以下哪个地区以华人美食集中而著名？", correct:"Box Hill", wrongs:["St Kilda","Docklands","Fitzroy"], explanation:"Box Hill 是华人社区与餐饮热点。" }
+];
+
+/* —— 状态 —— */
+const state = { question:null, selected:null, points:0, token:null };
+
+/* —— API（带超时） —— */
+function apiBase(){ return (CONFIG.API_BASE||"").trim(); }
+function withTimeout(promise, ms){
+  return Promise.race([promise, new Promise((_,rej)=>setTimeout(()=>rej(new Error("TIMEOUT")), ms))]);
+}
+async function apiGet(path){
+  const url = apiBase()+path;
+  const headers={'Content-Type':'application/json'};
+  if(state.token) headers.Authorization=`Bearer ${state.token}`;
+  const res = await withTimeout(fetch(url,{headers}), CONFIG.API_TIMEOUT_MS);
+  if(!res.ok) throw new Error("API_GET_FAILED");
+  return res.json();
+}
+async function apiPost(path, body){
+  const url = apiBase()+path;
+  const headers={'Content-Type':'application/json'};
+  if(state.token) headers.Authorization=`Bearer ${state.token}`;
+  const res = await withTimeout(fetch(url,{method:'POST',headers,body:JSON.stringify(body||{})}), CONFIG.API_TIMEOUT_MS);
+  if(!res.ok) throw new Error("API_POST_FAILED");
+  return res.json();
+}
+
+/* —— 每日限制 —— */
+function hasAnsweredToday(){ return !!lsGet('answered:'+todayKey(), false); }
+function setAnsweredToday(){ lsSet('answered:'+todayKey(), true); }
+
+/* —— 渲染 —— */
+function renderQuestion(q){
+  $("#questionText").textContent = q.title;
+  const box = $("#options"); box.innerHTML='';
+  q.options.forEach(opt=>{
+    const el = document.createElement('label');
+    el.className='option';
+    el.innerHTML = `<input type="radio" name="answer" value="${opt}" aria-label="${opt}"><span>${opt}</span>`;
+    el.addEventListener('click',()=>{ state.selected=opt; $("#btnSubmit").disabled=false; });
+    box.appendChild(el);
+  });
+}
+
+/* —— 逻辑 —— */
+async function loadUser(){
+  try{
+    const u = new URL(location.href);
+    state.token = u.searchParams.get('token') || null;
+    if(apiBase()){
+      const me = await apiGet(CONFIG.ENDPOINTS.ME);
+      setPoints(me.points ?? 0);
+      return;
+    }
+  }catch(e){}
+  setPoints(lsGet('points',0));
+}
+
+async function loadQuestion(){
+  $("#leftTime").textContent = fmtLeftTime();
+  setInterval(()=> $("#leftTime").textContent = fmtLeftTime(), 60000);
+
+  if(hasAnsweredToday()){
+    $("#questionText").textContent='您已参与今日答题，请明天再来！';
+    $("#btnSubmit").disabled=true;
+    return;
+  }
+
+  try{
+    if(apiBase()){
+      const data = await apiGet(CONFIG.ENDPOINTS.TODAY_QUESTION);
+      state.question = {
+        title: data.title,
+        options: shuffle([data.correct, ...(data.wrongs||[])]),
+        correct: data.correct,
+        explanation: data.explanation || ""
+      };
+    }else{
+      const q = fallbackQuestions[Math.floor(Math.random()*fallbackQuestions.length)];
+      state.question = { title:q.title, options: shuffle([q.correct,...q.wrongs]), correct:q.correct, explanation:q.explanation };
+    }
+  }catch(e){
+    // 任何错误都直接退回本地题库，确保一定能显示
+    const q = fallbackQuestions[Math.floor(Math.random()*fallbackQuestions.length)];
+    state.question = { title:q.title, options: shuffle([q.correct,...q.wrongs]), correct:q.correct, explanation:q.explanation };
+  }
+
+  renderQuestion(state.question);
+}
+
+async function submit(){
+  if(!state.selected || !state.question) return;
+  const correct = state.selected === state.question.correct;
+  setAnsweredToday();
+
+  [...document.querySelectorAll('.option')].forEach(el=>{
+    const v = el.querySelector('input').value;
+    if(v===state.question.correct) el.classList.add('correct');
+    if(v===state.selected && !correct) el.classList.add('wrong');
+  });
+  $("#btnSubmit").disabled = true;
+
+  if(correct){
+    const delta = CONFIG.POINTS_PER_CORRECT || 10;
+    try{
+      if(apiBase()){
+        const r = await apiPost(CONFIG.ENDPOINTS.ADD_POINTS, { delta });
+        setPoints(r.points ?? (state.points + delta));
+      }else{
+        setPoints(state.points + delta);
+        lsSet('points', state.points);
+      }
+    }catch(e){
+      setPoints(state.points + delta);
+      lsSet('points', state.points);
+    }
+    toast(`回答正确！+${CONFIG.POINTS_PER_CORRECT||10} 分\n${state.question.explanation||''}`, 'ok');
+  }else{
+    toast(`回答错误！正确答案：${state.question.correct}\n${state.question.explanation||''}`, 'err');
+  }
+
+  // 记录答案（可选）
+  try{
+    if(apiBase()){
+      await apiPost(CONFIG.ENDPOINTS.RECORD_ANSWER, { selected: state.selected, correct, ts: Date.now() });
+    }
+  }catch(e){}
+}
+
+document.addEventListener('DOMContentLoaded', async ()=>{
+  try{
+    await loadUser();
+    await loadQuestion();
+    $("#btnSubmit").addEventListener('click', submit);
+  }catch(e){
+    // 万一上面也炸了，仍然兜底渲染本地题
+    const q = fallbackQuestions[0];
+    state.question = { title:q.title, options: shuffle([q.correct,...q.wrongs]), correct:q.correct, explanation:q.explanation };
+    renderQuestion(state.question);
+  }
+});
+</script>
 </body>
 </html>
