@@ -40,8 +40,22 @@
     </footer>
   </main>
 
-  <!-- 读取配置 -->
-  <script defer src="./config.json" type="application/json" id="app-config"></script>
+  <!-- 直接内联配置，避免 config.json 加载异常 -->
+  <script id="app-config" type="application/json">
+  {
+    "APP_NAME": "MelbQuiz MVP",
+    "POINTS_PER_CORRECT": 10,
+    "API_BASE": "",
+    "ENDPOINTS": {
+      "ME": "/me",
+      "ADD_POINTS": "/points/add",
+      "RECORD_ANSWER": "/answers/record",
+      "TODAY_QUESTION": "/questions/today"
+    }
+  }
+  </script>
+
+  <!-- 确保文件名是 app.js（不是 app.gs） -->
   <script defer src="./app.js"></script>
 </body>
 </html>
