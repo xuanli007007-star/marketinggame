@@ -1,0 +1,9 @@
+{
+  "version": 2,
+  "name": "melb-quiz-mvp",
+  "builds": [{ "src": "index.html", "use": "@vercel/static" }],
+  "routes": [
+    { "src": "/config.json", "dest": "/config.json" },
+    { "src": "/(.*)", "dest": "/index.html" }
+  ]
+}
